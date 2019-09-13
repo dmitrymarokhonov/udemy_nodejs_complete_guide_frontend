@@ -56,17 +56,17 @@ class Feed extends Component {
     }
     const graphqlQuery = {
       query: `
-          {
-            posts { 
-              posts {
-                _id
-                title
-                content
-                creator {
-                  name
-                }
-                createdAt
-              } 
+        {
+          posts(page: ${page}) {
+            posts {
+              _id
+              title
+              content
+              creator {
+                name
+              }
+              createdAt
+            }
             totalPosts
           }
         }
@@ -156,7 +156,9 @@ class Feed extends Component {
     let graphqlQuery = {
       query: `
         mutation {
-          createPost(postInput: {title: "${postData.title}", content: "${postData.content}", imageUrl: "Some url"}) {
+          createPost(postInput: {title: "${postData.title}", content: "${
+        postData.content
+      }", imageUrl: "some url"}) {
             _id
             title
             content
@@ -169,6 +171,7 @@ class Feed extends Component {
         }
       `
     };
+
     fetch('http://localhost:8080/graphql', {
       method: 'POST',
       body: JSON.stringify(graphqlQuery),
@@ -205,6 +208,7 @@ class Feed extends Component {
             );
             updatedPosts[postIndex] = post;
           } else {
+            updatedPosts.pop();
             updatedPosts.unshift(post);
           }
           return {
