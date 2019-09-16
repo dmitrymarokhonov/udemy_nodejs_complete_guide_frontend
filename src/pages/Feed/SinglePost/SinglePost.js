@@ -1,22 +1,22 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
-import Image from "../../../components/Image/Image";
-import "./SinglePost.css";
+import Image from '../../../components/Image/Image';
+import './SinglePost.css';
 
 class SinglePost extends Component {
   state = {
-    title: "",
-    author: "",
-    date: "",
-    image: "",
-    content: ""
+    title: '',
+    author: '',
+    date: '',
+    image: '',
+    content: ''
   };
 
   componentDidMount() {
     const postId = this.props.match.params.postId;
     const graphqlQuery = {
-      query: `{
-        post(id: "${postId}") {
+      query: `query FetchSinglePost($postId: ID!) { 
+        post(id: $postId) {
           title
           content
           imageUrl
@@ -26,12 +26,15 @@ class SinglePost extends Component {
           createdAt
         }
       }
-      `
-    }
-    fetch("http://localhost:8080/graphql", {
-      method:'POST',
+      `,
+      variables: {
+        postId: postId
+      }
+    };
+    fetch('http://localhost:8080/graphql', {
+      method: 'POST',
       headers: {
-        Authorization: "Bearer " + this.props.token,
+        Authorization: 'Bearer ' + this.props.token,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(graphqlQuery)
@@ -47,9 +50,11 @@ class SinglePost extends Component {
         this.setState({
           title: resData.data.post.title,
           author: resData.data.post.creator.name,
-          date: new Date(resData.data.post.createdAt).toLocaleDateString("en-US"),
+          date: new Date(resData.data.post.createdAt).toLocaleDateString(
+            'en-US'
+          ),
           content: resData.data.post.content,
-          image: "http://localhost:8080/" + resData.data.post.imageUrl
+          image: 'http://localhost:8080/' + resData.data.post.imageUrl
         });
       })
       .catch(err => {
